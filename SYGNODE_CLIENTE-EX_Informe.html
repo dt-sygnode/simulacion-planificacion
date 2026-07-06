@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SYGNODE — CLIENTE-EX · Informe de Estado Semanal</title>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --beige: #F5F0E8;
+    --beige-dark: #EDE8DE;
+    --charcoal: #1C1C1A;
+    --charcoal-mid: #2E2E2C;
+    --charcoal-light: #4A4A47;
+    --coral: #D4613A;
+    --coral-light: #E8795A;
+    --warm-white: #FAF7F2;
+    --muted: #8C8880;
+    --line: rgba(28,28,26,0.12);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--charcoal);
+    color: var(--beige);
+    font-family: 'Inter', sans-serif;
+    font-weight: 300;
+    font-size: 16px;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  .slide {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 90px 10vw;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .slide-cover {
+    background: var(--charcoal);
+    justify-content: space-between;
+    padding-top: 60px;
+    padding-bottom: 60px;
+  }
+
+  .slide-cover::before {
+    content: '';
+    position: absolute;
+    top: -200px; right: -200px;
+    width: 700px; height: 700px;
+    background: radial-gradient(circle, rgba(212,97,58,0.08) 0%, transparent 65%);
+    pointer-events: none;
+  }
+  .slide-cover::after {
+    content: '';
+    position: absolute;
+    bottom: -100px; left: -100px;
+    width: 400px; height: 400px;
+    background: radial-gradient(circle, rgba(212,97,58,0.04) 0%, transparent 65%);
+    pointer-events: none;
+  }
+
+  .nav { display:flex; justify-content:space-between; align-items:center; opacity:0; animation: fadeUp 0.8s ease 0.2s forwards; }
+  .logo { font-family:'Instrument Serif', serif; font-size:1.1rem; letter-spacing:0.08em; color:var(--beige); }
+  .logo span { color: var(--coral); }
+  .nav-label { font-size:0.7rem; letter-spacing:0.2em; text-transform:uppercase; color:var(--muted); }
+
+  .cover-body { flex:1; display:flex; flex-direction:column; justify-content:center; gap:40px; opacity:0; animation: fadeUp 0.9s ease 0.5s forwards; }
+
+  .eyebrow { font-size:0.7rem; letter-spacing:0.25em; text-transform:uppercase; color:var(--coral); display:flex; align-items:center; gap:12px; }
+  .eyebrow::before { content:''; display:block; width:32px; height:1px; background:var(--coral); }
+
+  h1 { font-family:'Instrument Serif', serif; font-size:clamp(2.6rem, 6vw, 4.6rem); line-height:1.05; font-weight:400; color:var(--warm-white); max-width:16ch; }
+  h1 em { font-style:italic; color:var(--coral); }
+
+  .cover-meta-intro { font-size:0.8rem; letter-spacing:0.15em; text-transform:uppercase; color:var(--muted); margin-bottom:4px; }
+
+  .meta-grid { display:grid; grid-template-columns:1fr 1fr; gap:22px 48px; max-width:760px; }
+  .meta-label { font-size:0.62rem; letter-spacing:0.18em; text-transform:uppercase; color:var(--muted); margin-bottom:6px; }
+  .meta-value { font-size:0.92rem; color:var(--warm-white); font-weight:400; line-height:1.55; }
+  .meta-item.span-2 { grid-column: 1 / -1; }
+
+  .cover-footer { display:flex; align-items:center; justify-content:space-between; opacity:0; animation: fadeUp 0.8s ease 0.9s forwards; }
+  .scroll-hint { font-size:0.7rem; letter-spacing:0.2em; text-transform:uppercase; color:var(--muted); display:flex; align-items:center; gap:10px; }
+  .scroll-hint::after { content:''; display:block; width:40px; height:1px; background:var(--muted); animation: expandLine 1.5s ease 1.5s forwards; transform-origin:left; transform:scaleX(0.3); }
+  @keyframes expandLine { to { transform: scaleX(1); } }
+
+  .slide-dark { background: var(--charcoal-mid); }
+  .slide-light { background: var(--beige); color: var(--charcoal); }
+
+  .slide-number { position:absolute; top:40px; right:10vw; font-size:0.65rem; letter-spacing:0.2em; color:var(--muted); text-transform:uppercase; }
+
+  .section-label { font-size:0.65rem; letter-spacing:0.25em; text-transform:uppercase; color:var(--coral); margin-bottom:32px; display:flex; align-items:center; gap:10px; }
+  .section-label::before { content:''; display:block; width:24px; height:1px; background:var(--coral); }
+
+  h2 { font-family:'Instrument Serif', serif; font-size:clamp(1.9rem, 4vw, 3.1rem); font-weight:400; line-height:1.15; margin-bottom:28px; color:var(--warm-white); }
+  .slide-light h2 { color: var(--charcoal); }
+  h2 em { font-style:italic; color:var(--coral); }
+
+  h3.sub-head {
+    font-family:'Inter', sans-serif; font-weight:500; font-size:0.78rem;
+    letter-spacing:0.12em; text-transform:uppercase; color:var(--coral);
+    margin:38px 0 14px;
+  }
+  h3.sub-head:first-of-type { margin-top: 6px; }
+
+  .body-copy { font-size:0.95rem; line-height:1.8; color:var(--beige); max-width:780px; margin-bottom:16px; }
+  .slide-light .body-copy { color:var(--charcoal-light); }
+  .body-copy strong { color:var(--warm-white); font-weight:500; }
+  .slide-light .body-copy strong { color:var(--charcoal); }
+  .body-copy:last-child { margin-bottom: 0; }
+
+  .info-stack { display:flex; flex-direction:column; margin-top:8px; max-width:780px; }
+  .info-item { padding:26px 0; border-top:1px solid var(--line); }
+  .info-item:first-child { border-top:none; padding-top:0; }
+  .info-item p { font-size:0.92rem; line-height:1.8; color:var(--beige); }
+  .slide-light .info-item p { color:var(--charcoal-light); }
+  .info-item strong { color: var(--warm-white); font-weight:500; }
+  .slide-light .info-item strong { color: var(--charcoal); }
+
+  .big-number-block { margin:36px 0 40px; }
+  .big-figure { font-family:'Instrument Serif', serif; font-size:clamp(2.3rem,5.5vw,3.6rem); color:var(--coral); line-height:1; }
+  .big-figure-label { font-size:0.82rem; color:var(--muted); margin-top:12px; letter-spacing:0.02em; }
+
+  .quote-block { border-left:2px solid var(--coral); padding:22px 32px; margin:32px 0; background:rgba(212,97,58,0.03); max-width:640px; }
+  .quote-text { font-family:'Instrument Serif', serif; font-size:1.2rem; font-style:italic; color:var(--warm-white); line-height:1.5; }
+  .slide-light .quote-text { color: var(--charcoal); }
+  .quote-attr { font-size:0.7rem; color:var(--muted); letter-spacing:0.15em; text-transform:uppercase; margin-top:12px; }
+
+  .table-wrap { overflow-x:auto; margin-top:22px; max-width:100%; -webkit-overflow-scrolling: touch; }
+  .rtable { width:100%; min-width:600px; border-collapse:collapse; }
+  .rtable th {
+    font-size:0.62rem; letter-spacing:0.14em; text-transform:uppercase; color:var(--muted);
+    padding:10px 18px 10px 0; text-align:left; border-bottom:1px solid var(--line); white-space:nowrap;
+  }
+  .rtable td { padding:15px 18px 15px 0; font-size:0.85rem; border-bottom:1px solid rgba(255,255,255,0.05); vertical-align:top; color: var(--beige); }
+  .slide-light .rtable td { border-bottom:1px solid rgba(28,28,26,0.08); color: var(--charcoal-light); }
+  .rtable tr:last-child td { border-bottom:none; }
+  .rtable td strong, .rtable th strong { color:var(--warm-white); font-weight:500; }
+  .slide-light .rtable td strong { color: var(--charcoal); }
+  .rtable td.num { color:var(--coral); font-weight:500; white-space:nowrap; }
+  .rtable tr.subtotal td { font-weight:500; border-top:1px solid var(--line); padding-top:15px; }
+  .rtable td.wide { min-width: 280px; }
+
+  .scale-tag { font-size:0.68rem; color:var(--muted); }
+
+  .foot-note { font-size:0.8rem; font-style:italic; color:var(--muted); margin-top:16px; line-height:1.7; max-width:780px; }
+
+  .compromiso-list { list-style:none; display:flex; flex-direction:column; gap:0; margin-top:8px; max-width:780px; }
+  .compromiso-list li { display:grid; grid-template-columns:34px 1fr; gap:16px; font-size:0.92rem; line-height:1.65; color:var(--beige); padding:16px 0; border-top:1px solid var(--line); }
+  .compromiso-list li:first-child { border-top:none; padding-top:0; }
+  .slide-light .compromiso-list li { color:var(--charcoal-light); }
+  .compromiso-list .idx { font-family:'Instrument Serif', serif; color:var(--coral); font-size:1.05rem; }
+
+  .h-line { width:100%; height:1px; background:var(--line); margin:40px 0; }
+
+  .closing-content { position:relative; z-index:1; max-width:640px; margin: 0 auto; text-align:center; }
+  .slide-cta { background:var(--charcoal); text-align:center; align-items:center; }
+  .slide-cta::before {
+    content:''; position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+    width:800px; height:800px; background: radial-gradient(circle, rgba(212,97,58,0.07) 0%, transparent 60%); pointer-events:none;
+  }
+  .closing-content .quote-text { font-size:1.4rem; margin-bottom: 24px; }
+  .closing-content .cta-divider { width:40px; height:1px; background:var(--coral); margin:0 auto 28px; }
+  .closing-contact { font-size:0.8rem; color:var(--muted); letter-spacing:0.1em; }
+  .closing-contact strong { color:var(--beige); font-weight:400; }
+
+  @keyframes fadeUp { from{ opacity:0; transform:translateY(20px);} to{ opacity:1; transform:translateY(0);} }
+
+  .reveal { opacity:0; transform:translateY(24px); transition:opacity 0.7s ease, transform 0.7s ease; }
+  .reveal.visible { opacity:1; transform:translateY(0); }
+  .reveal-delay-1 { transition-delay:0.1s; }
+  .reveal-delay-2 { transition-delay:0.2s; }
+  .reveal-delay-3 { transition-delay:0.35s; }
+  .reveal-delay-4 { transition-delay:0.5s; }
+
+  .progress-bar { position:fixed; top:0; left:0; height:2px; background:var(--coral); z-index:100; transition:width 0.1s; }
+
+  @media (max-width: 768px) {
+    .slide { padding:70px 6vw; }
+    .meta-grid { grid-template-columns:1fr; gap:18px; }
+    h1 { font-size:2.3rem; }
+    h2 { font-size:1.7rem; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation:none !important; transition:none !important; transform:none !important; }
+  }
+
+  @media print {
+    /* Full-bleed: margin 0 on the page, real margins live in .slide padding,
+       so section background colors reach the paper edge on every page.
+       Named pages paint the FULL physical page in the section's colour — so
+       when a section overflows onto a second page, that page is fully coloured
+       too (no half-coloured "broken" pages at a page break). */
+    @page { size: Letter portrait; margin: 0; }
+    @page p-light { size: Letter portrait; margin: 0; background: #F5F0E8; }
+    @page p-mid   { size: Letter portrait; margin: 0; background: #2E2E2C; }
+    @page p-dark  { size: Letter portrait; margin: 0; background: #1C1C1A; }
+
+    .slide-light { page: p-light; }
+    .slide-dark  { page: p-mid; }
+    .slide-cover, .slide-cta { page: p-dark; }
+
+    *, *::before, *::after {
+      animation:none !important; transition:none !important;
+      opacity:1 !important; transform:none !important;
+      -webkit-print-color-adjust:exact !important; print-color-adjust:exact !important;
+    }
+    html, body { width:100%; height:auto; overflow:visible; background:transparent !important; }
+    .progress-bar { display:none !important; }
+    .reveal { opacity:1 !important; transform:none !important; }
+
+    /* Each section fills at least one full page. If its content is taller
+       than a page it flows onto additional full pages of the SAME
+       background color — no half-colored pages, no clipped content. */
+    .slide {
+      min-height:100vh;
+      padding:15mm 15mm 14mm;
+      page-break-after:always; break-after:page;
+      page-break-inside:auto; break-inside:auto;
+      display:flex; flex-direction:column; justify-content:flex-start;
+      overflow:visible;
+    }
+    /* Decorative radial glows waste space/ink and can spawn phantom overflow */
+    .slide::before, .slide::after { display:none !important; }
+    .slide-cover { justify-content:space-between; }
+    .slide-cta { justify-content:center; }
+    .slide:last-of-type { page-break-after:auto; break-after:auto; }
+    .slide-number { top:9mm; right:15mm; }
+
+    /* Typography pinned + densified for paper (fluid vw sizes are unreliable
+       in paged media and the screen spacing wastes vertical room) */
+    h1 { font-size:3rem !important; }
+    h2 { font-size:1.85rem !important; margin-bottom:16px; }
+    h3.sub-head { margin:12px 0 6px; }
+    h3.sub-head:first-of-type { margin-top:2px; }
+    .section-label { margin-bottom:14px; }
+    .body-copy { font-size:0.86rem; line-height:1.55; margin-bottom:8px; max-width:none; }
+    .info-stack { max-width:none; margin-top:4px; }
+    .info-item { padding:12px 0; }
+    .info-item p { font-size:0.85rem; line-height:1.6; }
+    .big-number-block { margin:14px 0 16px; }
+    .big-figure { font-size:2.6rem !important; }
+    .big-figure-label { margin-top:6px; }
+    .quote-block { margin:14px 0; padding:14px 22px; max-width:none; }
+    .quote-text { font-size:1.05rem; line-height:1.4; }
+    .closing-content .quote-text { font-size:1.3rem; }
+    .foot-note { font-size:0.72rem; margin-top:8px; line-height:1.5; max-width:none; }
+    .compromiso-list { max-width:none; }
+    .compromiso-list li { padding:9px 0; font-size:0.85rem; line-height:1.45; }
+
+    /* TABLES — the real "everything is cut off" bug:
+       min-width + nowrap forced tables wider than the page, and the
+       wrapper's overflow-x:auto then clipped the right-hand columns.
+       Let tables fit the page width and wrap instead. */
+    .table-wrap { overflow:visible !important; margin-top:12px; max-width:100%; }
+    .rtable { min-width:0 !important; width:100% !important; }
+    .rtable th { font-size:0.58rem; padding:6px 10px 6px 0; white-space:normal; }
+    .rtable td { font-size:0.76rem; padding:8px 10px 8px 0; line-height:1.45; }
+    .rtable td.wide { min-width:0 !important; }
+    /* money tokens have no spaces so they never wrap mid-number even as
+       'normal'; this only lets long composite cells wrap instead of forcing width */
+    .rtable td.num { white-space:normal !important; }
+
+    /* Move whole tables as a unit (each fits within one page) so no
+       table ever leaves a single stranded row on the next page */
+    table, thead, tbody, tr,
+    .quote-block, .big-number-block, .info-item,
+    .compromiso-list li, .meta-grid {
+      break-inside:avoid; page-break-inside:avoid;
+    }
+    thead { display:table-header-group; }
+
+    /* Headings never stranded at the bottom of a page */
+    h2, h3, h3.sub-head, .section-label {
+      break-after:avoid; page-break-after:avoid;
+    }
+    p, li { orphans:3; widows:3; }
+
+    /* Targeted compression for the 4 densest sections only, so each fits one
+       page comfortably (no overflow -> no fragile @page-background reliance;
+       every page is filled by its own .slide background, which every viewer
+       renders). Untouched sections keep their roomier spacing. */
+    .sec-dense .body-copy { margin-bottom:6px; line-height:1.48; }
+    .sec-dense h3.sub-head { margin:9px 0 5px; }
+    .sec-dense h3.sub-head:first-of-type { margin-top:2px; }
+    .sec-dense h2 { margin-bottom:12px; }
+    .sec-dense .big-number-block { margin:8px 0 10px; }
+    .sec-dense .big-figure { font-size:2.15rem !important; }
+    .sec-dense .big-figure-label { margin-top:4px; }
+    .sec-dense .quote-block { margin:10px 0; padding:11px 20px; }
+    .sec-dense .quote-text { font-size:1rem; line-height:1.35; }
+    .sec-dense .foot-note { margin-top:5px; line-height:1.4; }
+    .sec-dense .table-wrap { margin-top:8px; }
+    .sec-dense .rtable th { font-size:0.55rem; padding:4px 9px 4px 0; }
+    .sec-dense .rtable td { font-size:0.735rem; padding:4px 9px 4px 0; line-height:1.3; }
+  }
+</style>
+</head>
+<body>
+
+<div class="progress-bar" id="progressBar"></div>
+
+<!-- ═══ SLIDE 1 — COVER ═══ -->
+<section class="slide slide-cover">
+  <nav class="nav">
+    <div class="logo">SYG<span>NODE</span></div>
+    <div class="nav-label">Informe de estado semanal.</div>
+  </nav>
+
+  <div class="cover-body">
+    <div class="eyebrow">CLIENTE-EX · Confidencial · Datos Ficticios</div>
+    <h1>Informe de<br>estado <em>semanal.</em></h1>
+
+    <div class="meta-grid">
+      <div class="meta-item"><div class="meta-label">Cliente</div><div class="meta-value">CLIENTE-EX</div></div>
+      <div class="meta-item"><div class="meta-label">Clasificación</div><div class="meta-value">Confidencial</div></div>
+      <div class="meta-item"><div class="meta-label">Emisión</div><div class="meta-value">2026-07-06</div></div>
+      <div class="meta-item"><div class="meta-label">Periodo de meta leído</div><div class="meta-value">2026-05</div></div>
+      <div class="meta-item"><div class="meta-label">Corte operativo</div><div class="meta-value">2026-05-25</div></div>
+      <div class="meta-item"><div class="meta-label">Modo</div><div class="meta-value">Lectura base — primera corrida, sin comparativo previo</div></div>
+      <div class="meta-item"><div class="meta-label">Lectura del cuerpo</div><div class="meta-value">~9 minutos</div></div>
+      <div class="meta-item"><div class="meta-label">Agenda sugerida de reunión (40 min)</div><div class="meta-value">síntesis 5' · lectura central 10' · cola de decisión 15' · ventanas 5' · compromisos 5'</div></div>
+    </div>
+  </div>
+
+  <div class="cover-footer">
+    <div class="scroll-hint">Continuar</div>
+    <div class="nav-label">SYGNODE</div>
+  </div>
+</section>
+
+<!-- ═══ SLIDE 2 — CÓMO LEER LAS CIFRAS ═══ -->
+<section class="slide slide-dark">
+  <div class="slide-number">01 / 13</div>
+  <div class="section-label reveal">Guía de lectura</div>
+  <h2 class="reveal reveal-delay-1">Cómo leer las cifras<br>de este informe</h2>
+
+  <div class="info-stack reveal reveal-delay-2">
+    <div class="info-item">
+      <p><strong>Dos escalas.</strong> Las cifras marcadas <strong>[mes]</strong> corresponden al periodo de meta 2026-05. Las marcadas <strong>[cartera]</strong> corresponden a la totalidad de OTs vivas leídas, acumuladas a través de varios periodos. Facturado del mes y facturado de cartera son cosas distintas y nunca se comparan entre sí sin esta marca.</p>
+    </div>
+    <div class="info-item">
+      <p><strong>Regla de no suma.</strong> Las carteras de este informe se traslapan: una misma OT puede estar retenida en más de una compuerta y requerir más de una acción. Ninguna columna de montos se suma verticalmente entre tablas ni entre lentes de segmentación, salvo que la tabla lo indique de forma explícita. El único conjunto accionable sin duplicación es la <strong>cola maestra: 187 OTs únicas / $2.325.882.041 en valor total de OT</strong> ($2.223.024.636 movilizables por su acción primaria de esta semana).</p>
+    </div>
+    <div class="info-item">
+      <p><strong>Origen de las cifras.</strong> Todos los pesos son lecturas directas de los sistemas de CLIENTE-EX. Las equivalencias marcadas con ≈ son razones aritméticas simples entre dos cifras medidas, incluidas solo para dar escala. Este informe no contiene proyecciones.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ SLIDE 3 — 0. SÍNTESIS DE MANDO ═══ -->
+<section class="slide slide-light sec-dense">
+  <div class="slide-number" style="color:var(--charcoal-light);">02 / 13</div>
+  <div class="section-label reveal" style="color:var(--coral);">0 · Síntesis de mando</div>
+  <h2 class="reveal reveal-delay-1">Juicio titular</h2>
+
+  <div class="reveal reveal-delay-2">
+    <p class="body-copy"><strong>CLIENTE-EX cumple la meta global del mes con holgura. Esa holgura es real — y está ocultando dos cosas: cuatro frentes que no llegaron a su meta propia, y una cartera de trabajo ya ejecutado que no está cruzando a firma ni a factura.</strong></p>
+    <p class="body-copy">La lectura de mando no es que el cierre esté sano. Es que el verde global está financiado por unos frentes mientras otros quedan rojos, y que la cadena ejecución → evidencia → firma → factura → corte no está operando como una sola cadena de decisión.</p>
+
+    <h3 class="sub-head">La cifra de la semana</h3>
+    <div class="big-number-block">
+      <div class="big-figure">$1.328.382.859</div>
+      <div class="big-figure-label">112 OTs únicas</div>
+    </div>
+    <p class="body-copy">Trabajo ya ejecutado cuya conversión a cobro depende de decisiones disponibles esta semana: 104 OTs esperan cierre de firma, 101 esperan reparación de evidencia, y <strong>93 de ellas requieren ambas cosas</strong> — por eso las acciones (205) superan a las OTs (112). Equivale a ≈ 0,6 meses de la facturación del periodo.</p>
+
+    <div class="quote-block">
+      <p class="quote-text">"Separar lo ejecutado firmable de la fricción documental y cerrar cada OT con destino explícito: firmar, objetar con causa, facturar o retirar de meta."</p>
+      <p class="quote-attr">Prioridad de la semana</p>
+    </div>
+
+    <h3 class="sub-head">Contexto de presión</h3>
+    <p class="body-copy">La compuerta evidencia → firma retiene en total <strong>621 OTs / $8.105.296.363</strong>, con <strong>118,6 días promedio</strong> entre evidencia y firma — una presión equivalente a ≈ 3,5 meses de la facturación del periodo. La cifra de la semana es la porción de esa presión que ya tiene ruta de decisión.</p>
+
+    <h3 class="sub-head">Contadores de mando</h3>
+    <div class="table-wrap">
+      <table class="rtable">
+        <thead><tr><th>Contador</th><th>Medición</th><th>Escala</th></tr></thead>
+        <tbody>
+          <tr><td>Meta global 2026-05</td><td class="num">$1.990.000.000</td><td class="scale-tag">[mes]</td></tr>
+          <tr><td>Facturado 2026-05</td><td class="num">$2.304.116.043</td><td class="scale-tag">[mes]</td></tr>
+          <tr><td>Holgura del mes</td><td class="num">$314.116.043</td><td class="scale-tag">[mes]</td></tr>
+          <tr><td>Frentes rojos bajo el verde global</td><td>4 frentes, en 2 lentes de lectura (§A.2)</td><td class="scale-tag">[mes]</td></tr>
+          <tr><td>OTs leídas</td><td class="num">1.612</td><td class="scale-tag">[cartera]</td></tr>
+          <tr><td>Eventos leídos</td><td class="num">28.936</td><td class="scale-tag">[cartera]</td></tr>
+          <tr><td>Valor ejecutado total</td><td class="num">$17.466.770.299</td><td class="scale-tag">[cartera]</td></tr>
+          <tr><td>Valor facturado total</td><td class="num">$8.810.156.485</td><td class="scale-tag">[cartera]</td></tr>
+          <tr><td>Cola maestra accionable (sin duplicar)</td><td class="wide">187 OTs / $2.325.882.041 en valor total · $2.223.024.636 movilizable — ≈ 1,0 mes de facturación</td><td class="scale-tag">[cartera]</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="foot-note">Nota: el facturado del mes ($2.304.116.043) y el facturado total ($8.810.156.485) no son el mismo dato — el segundo acumula todos los periodos de la cartera leída.</p>
+  </div>
+</section>
+
+<!-- ═══ SLIDE 4 — 1. EVOLUCIÓN ═══ -->
+<section class="slide slide-dark">
+  <div class="slide-number">03 / 13</div>
+  <div class="section-label reveal">1 · Evolución</div>
+  <h2 class="reveal reveal-delay-1">Evolución</h2>
+
+  <div class="reveal reveal-delay-2">
+    <p class="body-copy">Primera lectura en este formato: no existen compromisos previos que marcar como Resuelto, Avanzó o Sin movimiento. Esta sección instala las <strong>líneas base</strong> que la próxima lectura medirá. Cada compromiso conserva su identificador entre lecturas.</p>
+
+    <div class="table-wrap">
+      <table class="rtable">
+        <thead><tr><th>ID</th><th>Compromiso instalado</th><th>Línea base de hoy</th></tr></thead>
+        <tbody>
+          <tr><td><strong>C1</strong></td><td class="wide">Cartera ejecutada atrapada entre evidencia y firma con ruta de decisión</td><td class="num">112 OTs únicas / $1.328.382.859</td></tr>
+          <tr><td><strong>C2</strong></td><td class="wide">Brecha del frente rojo Zona 5 — Frontera Austral</td><td class="num">$463.129.419 (75% de su meta sin cubrir)</td></tr>
+          <tr><td><strong>C3</strong></td><td class="wide">OTs en verde pasivo con destino explícito asignado</td><td class="num">0 de 490 / $5.505.172.128</td></tr>
+          <tr><td><strong>C4</strong></td><td class="wide">Autorizaciones frágiles regularizadas o retiradas de meta</td><td class="num">0 de 24 / $310.927.406</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p class="body-copy" style="margin-top:24px">A partir de la segunda lectura, todo compromiso sin avance aparece como <strong>Sin movimiento (deterioro activo)</strong>, con su costo acumulado visible.</p>
+  </div>
+</section>
+
+<!-- ═══ SLIDE 5 — 2. LECTURA CENTRAL ═══ -->
+<section class="slide slide-light sec-dense">
+  <div class="slide-number" style="color:var(--charcoal-light);">04 / 13</div>
+  <div class="section-label reveal" style="color:var(--coral);">2 · Lectura central</div>
+  <h2 class="reveal reveal-delay-1">Lectura central</h2>
+
+  <div class="reveal reveal-delay-2">
+    <h3 class="sub-head">Juicio</h3>
+    <p class="body-copy">La operación no tiene un problema primario de volumen. Tiene un problema de conversión: trabajo ya ejecutado queda detenido antes de firma, y la meta global cumplida lo vuelve menos visible.</p>
+
+    <h3 class="sub-head">Por qué era invisible (para esta simulación)</h3>
+    <p class="body-copy">Visto desde facturación, esto parece una cola normal de OTs pendientes, diferidas u objetadas. Visto desde operaciones, parece trabajo ejecutado que solo espera respaldo administrativo.</p>
+    <p class="body-copy">Visto como sistema, es capital ya consumido que no cruza a derecho de cobro, porque evidencia, firma y corte mensual no están actuando como una sola cadena de decisión — cada área ve su tramo sano y nadie ve la compuerta.</p>
+    <p class="body-copy">Hay una señal de escala que ninguna vista parcial entrega: en la cartera completa, la brecha bruta entre lo ejecutado y lo facturado es de <strong>$8.656.613.814</strong> [cartera]. Lo retenido en esta sola compuerta — <strong>$8.105.296.363</strong> — es del mismo orden. La conversión no es un tema lateral de administración: es donde vive la diferencia entre trabajar y cobrar.</p>
+
+    <h3 class="sub-head">La cadena</h3>
+    <p class="body-copy">Ejecución cerrada → evidencia o respaldo queda observado → la firma no llega al corte → la factura se difiere u objeta → la meta global se sostiene con otros frentes, mientras los frentes rojos quedan sin cierre propio.</p>
+
+    <h3 class="sub-head">Consecuencia y ventana</h3>
+    <p class="body-copy">La compuerta evidencia → firma acumula 621 OTs / $8.105.296.363, con 118,6 días promedio entre evidencia y firma. Dentro de esa presión, <strong>112 OTs / $1.328.382.859 no necesitan más inventario de tareas: necesitan una decisión de conversión</strong> (104 con firma pendiente, 101 con evidencia reparable, 93 con ambas).</p>
+    <p class="body-copy">La ventana barata es corta: firma y factura de corte se resuelven en 0–96 horas; evidencia observada, en 3–5 días; autorización frágil, en 5–10 días. Pasada esa ventana, el costo deja de ser documental: la evidencia se enfría, los firmantes cambian, las objeciones se vuelven más defendibles para el mandante, y cada cierre mensual agrega una capa nueva de OTs ejecutadas sin firma sobre las que ya existen.</p>
+
+    <h3 class="sub-head">La decisión disponible</h3>
+    <p class="body-copy"><strong>Sugerencia:</strong> instalar una sala de conversión de cierre, con un dueño único por OT y cuatro salidas permitidas — <strong>firmar, objetar con causa, facturar o retirar de meta</strong>. Ninguna OT sale de la sala sin destino registrado.</p>
+    <p class="body-copy"><strong>Qué cierra la reunión de hoy:</strong> sí o no a la sala, y quién es el dueño único.</p>
+    <p class="body-copy"><strong>Estado de validación:</strong> <strong>Confirmado</strong> para montos, estados y antigüedad leídos en sistema. <strong>Requiere validación</strong> para disponibilidad real de firmantes, existencia física de respaldos y causa comercial de cada objeción.</p>
+    <p class="body-copy"><strong>Lo que solo el equipo puede validar:</strong> si el firmante del mandante está disponible, si el respaldo físico existe fuera del sistema, y si una objeción es documental o comercial.</p>
+
+    <h3 class="sub-head">Evidencia</h3>
+    <p class="body-copy">Ver Anexos A.1, A.2 y B.1.</p>
+  </div>
+</section>
+
+<!-- ═══ SLIDE 6 — 3. MAPA DE PRESIÓN ═══ -->
+<section class="slide slide-dark">
+  <div class="slide-number">05 / 13</div>
+  <div class="section-label reveal">3 · Mapa de presión</div>
+  <h2 class="reveal reveal-delay-1">Mapa de presión</h2>
+
+  <div class="reveal reveal-delay-2">
+    <p class="body-copy">Las compuertas se traslapan: una OT puede aparecer en más de una fila. <strong>Los montos de esta tabla no se suman.</strong></p>
+
+    <div class="table-wrap">
+      <table class="rtable">
+        <thead><tr><th>Consecuencia</th><th>Dónde se acumula</th><th>Medición [cartera]</th><th>Lectura de decisión</th></tr></thead>
+        <tbody>
+          <tr><td>Capital</td><td>Evidencia → firma</td><td class="num wide">621 OTs / $8.105.296.363 / 118,6 d prom. (≈ 3,5 meses)</td><td class="wide">Trabajo ya ejecutado que no se convierte en cobro defendible.</td></tr>
+          <tr><td>Capital</td><td>Firma → factura / corte</td><td class="num wide">33 OTs / $296.161.370 (≈ 4 días de facturación)</td><td class="wide">La firma sola no basta si el corte separa limpia, diferida y objetada.</td></tr>
+          <tr><td>Control</td><td>Verde pasivo</td><td class="num wide">490 OTs / $5.505.172.128 (≈ 2,4 meses)</td><td class="wide">"Completa" o "autorizada" no significa cobrable si la OT no mueve caja.</td></tr>
+          <tr><td>Cumplimiento</td><td>Autorización → ejecución</td><td class="num wide">446 OTs / $5.100.900.376 / 121,5 d prom. (≈ 2,2 meses)</td><td class="wide">"Autorizada" mezcla permisos sanos con permisos frágiles que no sostienen cobro.</td></tr>
+          <tr><td>Disponibilidad</td><td>Programación → ejecución</td><td class="num wide">780 OTs / $10.036.314.307 / 115,5 d prom. (≈ 4,4 meses)</td><td class="wide">No es atraso per se: es la razón por la que acelerar ejecución sin arreglar conversión solo agranda la compuerta.</td></tr>
+          <tr><td>Control</td><td>Sumidero de facturación</td><td class="num wide">402 OTs / $5.229.863.812 (≈ 2,3 meses)</td><td class="wide">Valor firmado o ejecutado que se degrada en diferidas, objeciones o facturación incompleta.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ SLIDE 7 — 4. COLA DE SUGERENCIAS ═══ -->
+<section class="slide slide-light sec-dense">
+  <div class="slide-number" style="color:var(--charcoal-light);">06 / 13</div>
+  <div class="section-label reveal" style="color:var(--coral);">4 · Cola de sugerencias</div>
+  <h2 class="reveal reveal-delay-1">Cola de sugerencias</h2>
+
+  <div class="reveal reveal-delay-2">
+    <p class="body-copy">Cada fila está formulada para discutirse en la sala de reuniones: <strong>sí / no / asignar</strong>. Ninguna es una tarea; todas habilitan trabajo que el equipo ya sabe hacer.</p>
+
+    <h3 class="sub-head">Evaluar hoy</h3>
+    <div class="table-wrap">
+      <table class="rtable">
+        <thead><tr><th>Decisión (sí / no)</th><th>Alcance medido y costo de diferir</th><th>Validación pendiente</th><th>Owner propuesto</th></tr></thead>
+        <tbody>
+          <tr>
+            <td class="wide">¿Se instala la sala de conversión con dueño único por OT y cuatro salidas (firmar / objetar con causa / facturar / retirar de meta)?</td>
+            <td class="wide">112 OTs únicas / $1.328.382.859. Cada semana sin sala suma 7 días a un promedio que ya va en 118,6.</td>
+            <td class="wide">Firmante disponible y respaldo mínimo por OT.</td>
+            <td>Control financiero + jefe de contrato</td>
+          </tr>
+          <tr>
+            <td class="wide">¿Se factura hoy la parte limpia del corte y se rescata lo recuperable?</td>
+            <td class="wide">33 OTs / $296.161.370: 11 facturables en 24 h, 13 diferidas rescatables para el próximo corte, 9 objetadas con parte no disputada. Diferir = perder otro corte completo.</td>
+            <td class="wide">Causa de cada diferimiento u objeción; parte no disputada por OT.</td>
+            <td>Control financiero</td>
+          </tr>
+          <tr>
+            <td class="wide">¿Las 24 autorizaciones frágiles se regularizan con el mandante o salen de la meta del mes?</td>
+            <td class="wide">24 OTs / $310.927.406. Empujarlas a factura sin regularizar convierte meta en disputa.</td>
+            <td class="wide">El mandante confirma si el permiso sostiene cobro.</td>
+            <td>Jefe de contrato</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 class="sub-head">Preparar (alto valor con una condición previa)</h3>
+    <div class="table-wrap">
+      <table class="rtable">
+        <thead><tr><th>Decisión a preparar</th><th>Alcance medido</th><th>Validación pendiente</th><th>Owner propuesto</th></tr></thead>
+        <tbody>
+          <tr>
+            <td class="wide">Criterio único de admisión a ejecución en D-10 a D-3: solo entra trabajo que puede llegar a firma antes del corte.</td>
+            <td class="num">51 OTs / $630.610.786</td>
+            <td class="wide">Capacidad real de cuadrilla y disponibilidad de firmante.</td>
+            <td>Planificación + supervisor de zona</td>
+          </tr>
+          <tr>
+            <td class="wide">Estándar de paquete documental mínimo por mandante, para que la evidencia deje de rebotar.</td>
+            <td class="wide">101 OTs con evidencia observada (dentro de la cifra de la semana)</td>
+            <td class="wide">Documento faltante exacto por mandante.</td>
+            <td>Administración comercial</td>
+          </tr>
+          <tr>
+            <td class="wide">Mandato de intervención sobre Zona 5 — Frontera Austral como caso de mando, no como suma de tickets.</td>
+            <td class="wide">Brecha $463.129.419 — 75% de su meta sin cubrir. Las OTs accionables visibles de la zona en la cola suman una fracción menor de esa brecha: <strong>aunque toda su cola cierre, la zona no alcanza la meta este mes</strong>. La decisión es replanificar la meta, reforzar la cartera o reconocer el desvío — no perseguir OTs.</td>
+            <td class="wide"><strong>Probable — requiere validación:</strong> confirmar cartera completa de la zona fuera de la cola accionable, y la causa dominante (firma, autorización, evidencia o corte).</td>
+            <td>PMO operacional</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 class="sub-head">Vigilar</h3>
+    <div class="table-wrap">
+      <table class="rtable">
+        <thead><tr><th>Regla de vigilancia</th><th>Alcance medido</th><th>Validación pendiente</th><th>Owner propuesto</th></tr></thead>
+        <tbody>
+          <tr>
+            <td class="wide">Todo verde sin movimiento recibe destino explícito; el que no lo reciba entra a la cola la próxima lectura.</td>
+            <td class="num">490 OTs / $5.505.172.128</td>
+            <td class="wide">Último movimiento real y destino de cada OT.</td>
+            <td>Control de gestión</td>
+          </tr>
+          <tr>
+            <td class="wide">La trazabilidad parcial o inconsistente se clasifica antes del próximo cierre: bloquea cobro, o es solo documental interna.</td>
+            <td class="num">552 OTs / $6.762.520.235</td>
+            <td class="wide">Clasificación por OT.</td>
+            <td>Administración comercial</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ SLIDE 8 — 5. VENTANAS ═══ -->
+<section class="slide slide-dark">
+  <div class="slide-number">07 / 13</div>
+  <div class="section-label reveal">5 · Ventanas</div>
+  <h2 class="reveal reveal-delay-1">Ventanas</h2>
+
+  <div class="reveal reveal-delay-2">
+    <p class="body-copy">Las ventanas ordenan por urgencia, no por tamaño. Se traslapan entre sí y con la cola de decisión: <strong>no se suman</strong>. El monto de cada ventana corresponde al valor movilizable por esa acción, que puede diferir del monto total de la OT. El consolidado único sin duplicación es la cola maestra del pack de ejecución: <strong>187 OTs / $2.325.882.041 en valor total ($2.223.024.636 movilizable)</strong>.</p>
+
+    <div class="table-wrap">
+      <table class="rtable">
+        <thead><tr><th>Ventana</th><th>Decisión asociada</th><th>OTs</th><th>Monto movilizable</th><th>Secuencia de preparación</th></tr></thead>
+        <tbody>
+          <tr><td>0-24 h</td><td>Emitir factura limpia</td><td>11</td><td class="num">$19.628.565</td><td class="wide">Factura, respaldo final, envío a control.</td></tr>
+          <tr><td>24-48 h</td><td>Rescatar diferidas recuperables</td><td>13</td><td class="num">$248.108.508</td><td class="wide">Separar lo recuperable del mes ya cerrado; fechar el corte de entrada.</td></tr>
+          <tr><td>48-72 h</td><td>Separar objetadas con parte facturable</td><td>9</td><td class="num">$28.424.297</td><td class="wide">Definir parte no disputada y parte a negociar.</td></tr>
+          <tr><td>24-96 h</td><td>Cerrar firma sobre ejecutadas</td><td>104</td><td class="num">$1.294.817.271</td><td class="wide">Firmante, paquete mínimo, compromiso fechado por OT.</td></tr>
+          <tr><td>3-5 días</td><td>Reparar evidencia que bloquea firma</td><td>101</td><td class="num">$1.231.270.093</td><td class="wide">HH, materiales, HSE, evidencia y respaldo.</td></tr>
+          <tr><td>5-10 días</td><td>Regularizar o retirar autorización frágil</td><td>24</td><td class="num">$310.927.406</td><td class="wide">El mandante confirma, regulariza o la OT sale de meta.</td></tr>
+          <tr><td>D-10 a D-3</td><td>Acelerar solo ejecución firmable</td><td>51</td><td class="num">$630.610.786</td><td class="wide">Priorizar capacidad por probabilidad de llegar a firma.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="foot-note">Las ventanas 24–96 h y 3–5 días comparten 93 OTs; por eso sus 205 acciones corresponden a 112 OTs únicas.</p>
+  </div>
+</section>
+
+<!-- ═══ SLIDE 9 — 6. CIERRE ═══ -->
+<section class="slide slide-light">
+  <div class="slide-number" style="color:var(--charcoal-light);">08 / 13</div>
+  <div class="section-label reveal" style="color:var(--coral);">6 · Cierre</div>
+  <h2 class="reveal reveal-delay-1">Cierre</h2>
+
+  <div class="reveal reveal-delay-2">
+    <p class="body-copy">La próxima lectura mide estos cuatro compromisos contra sus líneas base (§1):</p>
+
+    <ol class="compromiso-list">
+      <li><span class="idx">1</span><span><strong>C1</strong> — Si la cartera ejecutada atrapada bajó de 112 OTs / $1.328.382.859, o solo cambió de etiqueta.</span></li>
+      <li><span class="idx">2</span><span><strong>C2</strong> — Si Zona 5 redujo brecha propia, o siguió subsidiada por el verde global.</span></li>
+      <li><span class="idx">3</span><span><strong>C3</strong> — Si las 490 OTs en verde pasivo recibieron destino explícito.</span></li>
+      <li><span class="idx">4</span><span><strong>C4</strong> — Si las 24 autorizaciones frágiles fueron regularizadas o retiradas de meta.</span></li>
+    </ol>
+
+    <p class="body-copy" style="margin-top:24px">Todo compromiso sin movimiento aparece la próxima semana como <strong>Sin movimiento (deterioro activo)</strong>, con su costo acumulado visible.</p>
+  </div>
+</section>
+
+<!-- ═══ SLIDE 10 — ANEXO A (A.1 + A.2) ═══ -->
+<section class="slide slide-dark sec-dense">
+  <div class="slide-number">09 / 13</div>
+  <div class="section-label reveal">7 · Anexos — A</div>
+  <h2 class="reveal reveal-delay-1">Anexo A — Evidencia<br>por hallazgo</h2>
+
+  <div class="reveal reveal-delay-2">
+    <h3 class="sub-head">A.1 · Conversión ejecución → evidencia → firma</h3>
+    <div class="table-wrap">
+      <table class="rtable">
+        <thead><tr><th>Evidencia</th><th>Medición [cartera]</th></tr></thead>
+        <tbody>
+          <tr><td class="wide">Compuerta evidencia → firma (todas las OTs retenidas entre evidencia y firma, cualquiera sea su etiqueta de estado)</td><td class="num">621 OTs / $8.105.296.363 / 118,6 días prom.</td></tr>
+          <tr><td class="wide">Vista simple por etiqueta — "ejecutadas no firmadas" (reproducible directamente por el equipo)</td><td class="num">532 OTs / $6.150.733.188</td></tr>
+          <tr><td class="wide">Pendientes de firma del mandante</td><td class="num">203 OTs / $2.210.804.202</td></tr>
+          <tr><td class="wide">Cartera de conversión con ruta de decisión (única, sin duplicar)</td><td class="num">112 OTs / $1.328.382.859</td></tr>
+          <tr><td class="wide">— de las cuales requieren cierre de firma</td><td class="num">104 OTs / $1.294.817.271</td></tr>
+          <tr><td class="wide">— de las cuales requieren reparación de evidencia</td><td class="num">101 OTs / $1.231.270.093</td></tr>
+          <tr><td class="wide">— de las cuales requieren ambas (contadas una sola vez arriba)</td><td class="num">93 OTs / $1.197.704.505</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="foot-note">Por qué la compuerta supera a la vista simple: la vista por etiqueta solo ve las OTs marcadas "ejecutada no firmada". La compuerta agrupa además las observadas, las atrasadas de cierre técnico y las firmadas que no alcanzan a ser facturables al corte — todo lo que está detenido entre evidencia y firma, sin importar cómo lo etiquetó cada sistema. Esa diferencia (89 OTs / $1.954.563.175) es precisamente lo que ninguna vista aislada muestra.</p>
+
+    <h3 class="sub-head">A.2 · Frentes rojos bajo la meta global cumplida</h3>
+    <p class="body-copy">Los frentes rojos se leen en dos lentes de segmentación. <strong>Los lentes se traslapan</strong> (las OTs de un mandante viven dentro de zonas): las brechas no se suman entre lentes.</p>
+
+    <p class="body-copy" style="margin-top:20px"><strong>Lente zona / planificación — 1 frente:</strong></p>
+    <div class="table-wrap">
+      <table class="rtable">
+        <thead><tr><th>Segmento</th><th>Meta [mes]</th><th>Facturado [mes]</th><th>Brecha</th><th>Cumplimiento</th></tr></thead>
+        <tbody>
+          <tr><td class="wide">Zona 5 — Frontera Austral Puerto Williams / Tierra del Fuego</td><td class="num">$620.000.000</td><td class="num">$156.870.581</td><td class="num">$463.129.419</td><td>25%</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="foot-note">Hallazgo de estructura: la brecha de Zona 5 coincide al peso con la de una única cartera de planificación — toda la zona depende de una sola cartera, sin diversificación. Estado: <strong>Probable</strong> (coincidencia exacta en sistema); requiere confirmar la dotación real de planificación de la zona. El detalle por responsable vive en el pack de ejecución.</p>
+
+    <p class="body-copy" style="margin-top:28px"><strong>Lente mandante — 3 frentes (dentro de este lente los mandantes son disjuntos y sus brechas sí se suman):</strong></p>
+    <div class="table-wrap">
+      <table class="rtable">
+        <thead><tr><th>Mandante</th><th>Meta [mes]</th><th>Facturado [mes]</th><th>Brecha</th><th>Cumplimiento</th></tr></thead>
+        <tbody>
+          <tr><td>Energia Austral S.A.</td><td class="num">$520.000.000</td><td class="num">$375.061.515</td><td class="num">$144.938.485</td><td>72%</td></tr>
+          <tr><td>Metanol Patagonia Ltda.</td><td class="num">$340.000.000</td><td class="num">$271.501.752</td><td class="num">$68.498.248</td><td>80%</td></tr>
+          <tr><td>Austral Procesos Industriales S.A.</td><td class="num">$260.000.000</td><td class="num">$208.966.740</td><td class="num">$51.033.260</td><td>80%</td></tr>
+          <tr class="subtotal"><td><strong>Subtotal del lente</strong></td><td></td><td></td><td class="num"><strong>$264.469.993</strong></td><td></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ SLIDE 11 — ANEXO A.3 + B.1 ═══ -->
+<section class="slide slide-light">
+  <div class="slide-number" style="color:var(--charcoal-light);">10 / 13</div>
+  <div class="section-label reveal" style="color:var(--coral);">7 · Anexos — A / B</div>
+  <h2 class="reveal reveal-delay-1">A.3 · Verde pasivo</h2>
+
+  <div class="reveal reveal-delay-2">
+    <div class="table-wrap">
+      <table class="rtable">
+        <thead><tr><th>Evidencia</th><th>Medición [cartera]</th></tr></thead>
+        <tbody>
+          <tr><td class="wide">Verde pasivo (sin movimiento hacia caja)</td><td class="num">490 OTs / $5.505.172.128</td></tr>
+          <tr><td class="wide">Sumidero de facturación</td><td class="num">402 OTs / $5.229.863.812</td></tr>
+          <tr><td class="wide">Estado simple "ejecutada completa"</td><td class="num">$8.618.142.279 ejecutado / $707.236.279 facturado</td></tr>
+          <tr><td class="wide">Estado simple "cerrada técnica"</td><td class="num">$8.466.621.715 ejecutado / $8.102.920.206 facturado</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="foot-note">La asimetría entre los dos estados simples es la firma del problema: lo "cerrado técnico" factura casi todo; lo "ejecutado completo" casi nada. El verde de estado no es verde de caja.</p>
+
+    <h3 class="sub-head">Anexo B — Carteras de referencia</h3>
+    <p class="body-copy" style="margin-top:0"><strong>B.1 · Carteras simples que el equipo puede reproducir directamente</strong></p>
+    <p class="body-copy">Estas seis vistas salen de consultas directas a los sistemas de CLIENTE-EX y sirven para auditar este informe. <strong>Se traslapan entre sí: no se suman.</strong></p>
+
+    <div class="table-wrap">
+      <table class="rtable">
+        <thead><tr><th>Cartera</th><th>OTs</th><th>Monto [cartera]</th></tr></thead>
+        <tbody>
+          <tr><td>Ejecutadas no firmadas</td><td>532</td><td class="num">$6.150.733.188</td></tr>
+          <tr><td>Firmadas no facturadas</td><td>176</td><td class="num">$1.735.201.168</td></tr>
+          <tr><td>Autorizadas no ejecutadas</td><td>242</td><td class="num">$2.814.754.437</td></tr>
+          <tr><td>Pendientes firma mandante</td><td>203</td><td class="num">$2.210.804.202</td></tr>
+          <tr><td>Trazabilidad parcial/inconsistente</td><td>552</td><td class="num">$6.762.520.235</td></tr>
+          <tr><td>Valor en disputa</td><td>147</td><td class="num">$685.035.684</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="foot-note">Donde una compuerta del cuerpo supera a su cartera simple (p. ej. autorización → ejecución: 446 OTs contra 242 de la vista simple), la diferencia corresponde a OTs cuya condición real cruza etiquetas de más de un sistema — el traslape que ninguna vista aislada registra.</p>
+  </div>
+</section>
+
+<!-- ═══ SLIDE 12 — ANEXO B.2 ═══ -->
+<section class="slide slide-dark">
+  <div class="slide-number">11 / 13</div>
+  <div class="section-label reveal">7 · Anexos — B</div>
+  <h2 class="reveal reveal-delay-1">B.2 · Ventanas<br>completas de acción</h2>
+
+  <div class="reveal reveal-delay-2">
+    <div class="table-wrap">
+      <table class="rtable">
+        <thead><tr><th>Ventana</th><th>OTs</th><th>Monto movilizable</th><th>Movimiento</th></tr></thead>
+        <tbody>
+          <tr><td>0-24 h</td><td>11</td><td class="num">$19.628.565</td><td>Emitir factura limpia</td></tr>
+          <tr><td>24-48 h</td><td>13</td><td class="num">$248.108.508</td><td>Rescatar diferidas recuperables</td></tr>
+          <tr><td>48-72 h</td><td>9</td><td class="num">$28.424.297</td><td>Separar objetadas con parte facturable</td></tr>
+          <tr><td>24-96 h</td><td>104</td><td class="num">$1.294.817.271</td><td>Cerrar firma sobre ejecutadas</td></tr>
+          <tr><td>3-5 días</td><td>101</td><td class="num">$1.231.270.093</td><td>Reparar evidencia que bloquea firma</td></tr>
+          <tr><td>5-10 días</td><td>24</td><td class="num">$310.927.406</td><td>Regularizar o retirar autorización frágil</td></tr>
+          <tr><td>D-10 a D-3</td><td>51</td><td class="num">$630.610.786</td><td>Acelerar solo ejecución firmable</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="foot-note">313 acciones en total sobre 187 OTs únicas: una OT puede requerir más de una acción. El pack de ejecución asocia cada OT a su ventana más corta primero.</p>
+  </div>
+</section>
+
+<!-- ═══ SLIDE 13 — ANEXO C ═══ -->
+<section class="slide slide-light">
+  <div class="slide-number" style="color:var(--charcoal-light);">12 / 13</div>
+  <div class="section-label reveal" style="color:var(--coral);">7 · Anexos — C</div>
+  <h2 class="reveal reveal-delay-1">Anexo C — Cobertura,<br>límites y convenciones</h2>
+
+  <div class="reveal reveal-delay-2">
+    <div class="table-wrap">
+      <table class="rtable">
+        <thead><tr><th>Cobertura</th><th>Lectura</th></tr></thead>
+        <tbody>
+          <tr><td>Registros leídos</td><td class="num">71.606</td></tr>
+          <tr><td>Tablas / vistas</td><td>30 tablas / 18 vistas</td></tr>
+          <tr><td>Periodo de metas detectado</td><td>2026-05</td></tr>
+          <tr><td>Corte operativo usado</td><td>2026-05-25</td></tr>
+          <tr><td>Integridad de fuente</td><td>Sin cambios entre inicio y fin de la lectura</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 class="sub-head">Límites declarados</h3>
+    <div class="info-stack">
+      <div class="info-item"><p><strong>Realidad física:</strong> este informe lee sistemas. Recepciones físicas, disponibilidad de firmantes y acuerdos comerciales deben validarse con el equipo antes de ejecutar.</p></div>
+      <div class="info-item"><p><strong>Temporal:</strong> este informe no presenta predicciones; las cifras son lecturas del estado actual y los escenarios de la cola de decisión son condicionales.</p></div>
+      <div class="info-item"><p><strong>Editorial:</strong> el anexo incluye solo evidencia referida por hallazgos del cuerpo. Los listados completos de vigilancia viven en el pack de ejecución.</p></div>
+      <div class="info-item"><p><strong>De suma:</strong> ver "Cómo leer las cifras" al inicio. Ante cualquier duda, el total único es la cola maestra: 187 OTs / $2.325.882.041 en valor total de OT ($2.223.024.636 movilizable por acción primaria).</p></div>
+    </div>
+
+    <h3 class="sub-head">Convenciones</h3>
+    <p class="body-copy">Escalas: <strong>[mes]</strong> = periodo de meta 2026-05; <strong>[cartera]</strong> = totalidad de OTs vivas leídas. Estados de validación: <strong>Confirmado</strong> (leído en sistema), <strong>Probable</strong> (patrón consistente, falta una confirmación), <strong>Requiere validación</strong> (el equipo debe verificar en terreno o con el mandante). Notación: punto como separador de miles; coma decimal. Ancla de no suma: el par (valor total de OT / movilizable por acción primaria) de la cola maestra, recalculado en cada corrida. Invariante de datos: movilizable ≤ valor total en toda fila.</p>
+
+    <h3 class="sub-head">Glosario mínimo</h3>
+    <p class="body-copy"><strong>Compuerta:</strong> punto del ciclo donde el valor queda retenido entre un estado y el siguiente. <strong>Cartera:</strong> conjunto de OTs que comparten una condición. <strong>Verde pasivo:</strong> OT con estado favorable en sistema pero sin movimiento hacia caja. <strong>Frente rojo:</strong> segmento que no alcanza su meta propia aunque la meta global esté cumplida. <strong>Corte:</strong> cierre mensual de facturación.</p>
+  </div>
+</section>
+
+<!-- ═══ SLIDE 14 — CIERRE FINAL ═══ -->
+<section class="slide slide-cta">
+  <div class="slide-number">13 / 13</div>
+  <div class="closing-content">
+    <div class="eyebrow reveal" style="justify-content:center">Confidencial · Lectura base — CLIENTE-EX 2026-05</div>
+    <p class="quote-text reveal reveal-delay-1">Informe de estado semanal SYGNODE.</p>
+    <div class="cta-divider reveal reveal-delay-2"></div>
+    <p class="closing-contact reveal reveal-delay-2">El pack de ejecución asociado baja cada decisión a OTs, owners y ventanas.</p>
+  </div>
+</section>
+
+<script>
+  const bar = document.getElementById('progressBar');
+  window.addEventListener('scroll', () => {
+    const scrolled = window.scrollY;
+    const total = document.documentElement.scrollHeight - window.innerHeight;
+    bar.style.width = (scrolled / total * 100) + '%';
+  });
+
+  const revealEls = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        observer.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -60px 0px' });
+
+  revealEls.forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
